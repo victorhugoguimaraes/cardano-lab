@@ -1,4 +1,4 @@
-# Cardano Lab — Carteira na rede Preview
+# Cardano Lab - Carteira na rede Preview
 
 Aplicação educacional em TypeScript para interagir com a blockchain Cardano na rede de testes **Preview**. O sistema cria e importa carteiras, consulta dados pela Blockfrost e realiza transferências de tADA com assinatura local.
 
