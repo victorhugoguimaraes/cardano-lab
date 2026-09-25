@@ -1,8 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as crypto from 'crypto';
 import * as readline from 'readline';
 import * as CardanoWasm from '@emurgo/cardano-serialization-lib-nodejs';
+import { generateMnemonic, mnemonicToEntropy as bip39MnemonicToEntropy, validateMnemonic, wordlists } from 'bip39';
 import { AppError, errorMessage, toAppError } from './errors';
 
 export interface WalletData {
@@ -14,102 +14,30 @@ export interface WalletData {
 }
 
 const WALLET_FILE = path.join(__dirname, '..', 'wallet.json');
-const BIP39_FILE = path.join(__dirname, '..', 'bip39_words.txt');
-
-// ============================================================
-// Wordlist BIP39
-// ============================================================
-
-let _cachedWordlist: string[] | null = null;
-
-function getBip39Wordlist(): string[] {
-  if (_cachedWordlist) return _cachedWordlist;
-
-  try {
-    const content = fs.readFileSync(BIP39_FILE, 'utf-8');
-    const matched = content.match(/[a-z]+/g);
-    _cachedWordlist = matched ? matched.map(w => w.trim().toLowerCase()) : [];
-
-    if (_cachedWordlist.length !== 2048) {
-      throw new AppError(
-        'INVALID_WORDLIST',
-        `Wordlist BIP39 contém ${_cachedWordlist.length} palavras, esperadas 2048`,
-        `Verifique o arquivo ${BIP39_FILE}`
-      );
-    }
-
-    return _cachedWordlist;
-  } catch (error) {
-    if (error instanceof AppError) throw error;
-    throw new AppError(
-      'WORDLIST_NOT_FOUND',
-      'Arquivo de wordlist BIP39 não encontrado',
-      `Esperado em: ${BIP39_FILE}`
-    );
-  }
-}
-
-// ============================================================
-// Geração segura de mnemonic (BIP39 com checksum)
-// ============================================================
-
-function generateRandomMnemonic(): string[] {
-  const wordlist = getBip39Wordlist();
-
-  // 256 bits de entropia via CSPRNG
-  const entropy = crypto.randomBytes(32);
-
-  // Checksum = primeiros 8 bits do SHA-256 da entropia
-  const hash = crypto.createHash('sha256').update(entropy).digest();
-
-  // Converter entropia para bits
-  let bits = '';
-  for (const byte of entropy) {
-    bits += byte.toString(2).padStart(8, '0');
-  }
-
-  // Adicionar 8 bits de checksum (256 bits de entropia → 8 bits de checksum)
-  const checksumBits = hash[0].toString(2).padStart(8, '0');
-  bits += checksumBits;
-
-  // 264 bits / 11 = 24 palavras
-  const words: string[] = [];
-  for (let i = 0; i < 24; i++) {
-    const index = parseInt(bits.slice(i * 11, (i + 1) * 11), 2);
-    words.push(wordlist[index]);
-  }
-
-  return words;
-}
-
-// ============================================================
-// Conversão mnemonic → entropia
-// ============================================================
+const BIP39_ENGLISH_WORDLIST = wordlists.english;
 
 function mnemonicToEntropy(words: string[]): string {
-  const wordlist = getBip39Wordlist();
-  let bits = '';
-
   for (const word of words) {
     const normalizedWord = word.toLowerCase().trim();
-    const index = wordlist.indexOf(normalizedWord);
-    if (index === -1) {
+    if (!BIP39_ENGLISH_WORDLIST.includes(normalizedWord)) {
       throw new AppError(
         'INVALID_WORD',
         `Palavra inválida: "${word}"`,
-        `A palavra "${word}" não está na lista BIP39. Verifique a ortografia.`
+        `A palavra "${word}" não está na lista BIP39 inglesa. Verifique a ortografia.`
       );
     }
-    bits += index.toString(2).padStart(11, '0');
   }
 
-  const entropyBits = bits.slice(0, 256);
-  const bytes: number[] = [];
-  for (let i = 0; i < entropyBits.length; i += 8) {
-    bytes.push(parseInt(entropyBits.slice(i, i + 8), 2));
+  const mnemonic = words.map((word) => word.toLowerCase().trim()).join(' ');
+  if (!validateMnemonic(mnemonic, BIP39_ENGLISH_WORDLIST)) {
+    throw new AppError(
+      'INVALID_MNEMONIC_CHECKSUM',
+      'Mnemonic inválido',
+      'As 24 palavras não formam um mnemonic BIP39 válido. Verifique a ordem e a ortografia.'
+    );
   }
 
-  return Buffer.from(bytes).toString('hex');
+  return bip39MnemonicToEntropy(mnemonic, BIP39_ENGLISH_WORDLIST);
 }
 
 // ============================================================
@@ -292,7 +220,7 @@ export async function createNewWallet(): Promise<WalletData> {
 
   console.log('\n[WALLET] Gerando nova carteira...');
 
-  const words = generateRandomMnemonic();
+  const words = generateMnemonic(256, undefined, BIP39_ENGLISH_WORDLIST).split(' ');
 
   console.log('\n*** GUARDE ESTAS 24 PALAVRAS EM LOCAL SEGURO ***\n');
   console.log(words.map((w, i) => `${String(i + 1).padStart(2, '0')}. ${w}`).join('\n'));
@@ -311,7 +239,7 @@ export async function createNewWallet(): Promise<WalletData> {
  * Retorna os dados da carteira e as palavras mnemônicas para exibição.
  */
 export function generateWalletForAPI(): { wallet: WalletData; words: string[] } {
-  const words = generateRandomMnemonic();
+  const words = generateMnemonic(256, undefined, BIP39_ENGLISH_WORDLIST).split(' ');
   const wallet = persistWalletFromMnemonic(words.join(' '));
   return { wallet, words };
 }

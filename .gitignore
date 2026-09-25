@@ -1,9 +1,12 @@
+# Credenciais e dados sensíveis da carteira
 .env
 wallet.json
+
+# Dependências e artefatos gerados
 node_modules/
 dist/
-*.js
-*.js.map
-*.d.ts
-!src/**/*.ts
-!frontend/js/*.js
+
+# Arquivos de sistema e editor
+.DS_Store
+Thumbs.db
+.vscode/

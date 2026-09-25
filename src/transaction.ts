@@ -1,6 +1,6 @@
 import * as CardanoWasm from '@emurgo/cardano-serialization-lib-nodejs';
 import { blockfrost, getProtocolParameters } from './blockfrost';
-import { UTXO, getAddressUtxos } from './utxo';
+import { UTXO, assertPreviewAddress, getAddressUtxos, isAdaOnlyUtxo } from './utxo';
 import { getAddress, loadWallet } from './wallet';
 import { AppError, errorMessage, httpStatus, toAppError } from './errors';
 
@@ -130,6 +130,8 @@ export async function buildTransaction(
   toAddress: string,
   amountLovelace: bigint
 ): Promise<TransactionResult> {
+  assertPreviewAddress(toAddress);
+
   const fromAddress = getAddress();
   const wallet = loadWallet();
 
@@ -138,12 +140,13 @@ export async function buildTransaction(
   }
 
   console.log('[TX] Obtendo UTXOs...');
-  const utxos = await getAddressUtxos(fromAddress);
+  const availableUtxos = await getAddressUtxos(fromAddress);
+  const utxos = availableUtxos.filter(isAdaOnlyUtxo);
   if (utxos.length === 0) {
     throw new AppError(
-      'NO_UTXOS',
-      'Nenhum UTXO disponível',
-      'Solicite tADA na faucet primeiro.'
+      'NO_ADA_ONLY_UTXOS',
+      'Nenhum UTXO somente com ADA disponível',
+      'Esta transferência preserva tokens nativos ao usar somente UTXOs com ADA. Receba tADA pela faucet ou use uma carteira sem tokens nativos.'
     );
   }
 

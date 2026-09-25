@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { importWalletWithMnemonic, generateWalletForAPI, loadWallet } from './wallet';
-import { getAddressBalance, getAddressUtxos, getStakeAccount } from './utxo';
+import { assertPreviewAddress, getAddressBalance, getAddressUtxos, getStakeAccount } from './utxo';
 import { transferADA } from './transaction';
 import { getTip, getProtocolParameters } from './blockfrost';
 import { AppError, errorMessage, toAppError } from './errors';
@@ -59,7 +59,13 @@ async function readJsonBody(req: Request): Promise<Record<string, unknown> | nul
 }
 
 function isValidAddress(address: unknown): address is string {
-  return typeof address === 'string' && address.startsWith('addr_');
+  if (typeof address !== 'string') return false;
+  try {
+    assertPreviewAddress(address);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function serveStatic(pathname: string): Response {

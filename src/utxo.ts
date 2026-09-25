@@ -15,19 +15,32 @@ export interface StakeAccountView {
   controlledAmount: string | null;
 }
 
-function assertTestAddress(address: string): void {
-  if (!address || !address.startsWith('addr_')) {
+export function assertPreviewAddress(address: string): void {
+  if (!address || !address.startsWith('addr_test1')) {
     throw new AppError(
       'INVALID_ADDRESS',
       'Endereço inválido',
-      'O endereço deve começar com "addr_" e ser um endereço Cardano válido.'
+      'Informe um endereço de pagamento Cardano da rede Preview (addr_test1...).'
+    );
+  }
+
+  try {
+    const decodedAddress = CardanoWasm.Address.from_bech32(address);
+    if (decodedAddress.network_id() !== 0) {
+      throw new Error('rede diferente de Preview');
+    }
+  } catch {
+    throw new AppError(
+      'INVALID_ADDRESS',
+      'Endereço inválido',
+      'Informe um endereço Cardano válido da rede Preview (addr_test1...).'
     );
   }
 }
 
 export async function getAddressBalance(address: string): Promise<bigint> {
   try {
-    assertTestAddress(address);
+    assertPreviewAddress(address);
     const utxos = await blockfrost.addressesUtxos(address);
     let totalBalance = BigInt(0);
 
@@ -49,7 +62,7 @@ export async function getAddressBalance(address: string): Promise<bigint> {
 
 export async function getAddressUtxos(address: string): Promise<UTXO[]> {
   try {
-    assertTestAddress(address);
+    assertPreviewAddress(address);
     const utxos = await blockfrost.addressesUtxos(address);
     return utxos.map((utxo) => ({
       tx_hash: utxo.tx_hash,
@@ -107,4 +120,8 @@ export function filterUsableUtxos(utxos: UTXO[]): UTXO[] {
     const lovelaceAmount = utxo.amount.find((a) => a.unit === 'lovelace');
     return Boolean(lovelaceAmount && BigInt(lovelaceAmount.quantity) >= minUtxo);
   });
+}
+
+export function isAdaOnlyUtxo(utxo: UTXO): boolean {
+  return utxo.amount.every((amount) => amount.unit === 'lovelace');
 }
