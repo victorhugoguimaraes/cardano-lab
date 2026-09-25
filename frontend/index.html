@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cardano Preview Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-brand">
+        <div class="logo-mark">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <rect width="32" height="32" rx="8" fill="#0D0D0D"/>
+            <circle cx="16" cy="16" r="6" fill="#00FF88"/>
+            <circle cx="16" cy="16" r="3" fill="#0D0D0D"/>
+          </svg>
+        </div>
+        <h1 class="brand-name">Cardano Lab</h1>
+        <span class="network-badge">Preview</span>
+      </div>
+      <div class="header-status">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText">Desconectado</span>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Wallet Section -->
+      <section class="card wallet-card">
+        <div class="card-header">
+          <h2>Carteira</h2>
+          <button class="btn btn-small" id="btnRefresh" title="Atualizar">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.418A6 6 0 1 1 8 2v1z"/>
+              <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="wallet-address">
+          <span class="label">Endereço</span>
+          <code id="walletAddress">Aguardando geração...</code>
+          <button class="btn-copy" id="btnCopyAddress" title="Copiar">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25v-7.5z"/>
+              <path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25v-7.5zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25h-7.5z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="wallet-balance">
+          <span class="balance-amount" id="balanceAmount">0.000000</span>
+          <span class="balance-unit">ADA</span>
+        </div>
+        <div class="wallet-actions">
+          <button class="btn btn-primary" id="btnImportWallet">
+            Importar Carteira
+          </button>
+          <button class="btn btn-secondary" id="btnNewWallet">
+            Gerar Nova
+          </button>
+          <button class="btn btn-secondary" id="btnFaucet">
+            Faucet
+          </button>
+        </div>
+      </section>
+
+      <!-- Mnemonic Import Modal -->
+      <section class="card mnemonic-card" id="mnemonicSection" style="display: none;">
+        <div class="card-header">
+          <h2>Importar com Mnemonic</h2>
+          <button class="btn btn-small" id="btnCancelImport" type="button">Fechar</button>
+        </div>
+        <form id="mnemonicForm" class="mnemonic-form">
+          <div class="form-group">
+            <label>24 palavras mnemônicas</label>
+            <p class="mnemonic-hint">Cole todas as 24 palavras no primeiro campo ou preencha uma por uma</p>
+            <div class="mnemonic-grid" id="mnemonicGrid"></div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full" id="btnMnemonicImport">
+            Importar Carteira
+          </button>
+        </form>
+      </section>
+
+      <!-- Generated Mnemonic Section -->
+      <section class="card mnemonic-card" id="generatedSection" style="display: none;">
+        <div class="card-header">
+          <h2>Nova Carteira Criada</h2>
+          <button class="btn btn-small" id="btnCloseGenerated" type="button">Fechar</button>
+        </div>
+        <p class="mnemonic-hint" style="color: var(--warning); margin-bottom: 0.75rem; font-weight: 500;">
+          ⚠️ Guarde estas 24 palavras em local seguro. Elas são necessárias para recuperar sua carteira!
+        </p>
+        <div class="mnemonic-grid" id="generatedGrid"></div>
+        <div style="margin-top: 1rem;">
+          <button type="button" class="btn btn-secondary btn-full" id="btnCopyGeneratedMnemonic">
+            Copiar 24 Palavras
+          </button>
+        </div>
+      </section>
+
+      <!-- UTXOs Section -->
+      <section class="card utxos-card">
+        <div class="card-header">
+          <h2>UTXOs</h2>
+          <span class="count-badge" id="utxoCount">0</span>
+        </div>
+        <div class="utxos-list" id="utxosList">
+          <div class="empty-state">
+            <p>Nenhum UTXO disponível</p>
+            <span>Gere uma carteira e solicite tADA na faucet</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Chain Info: Tip, Protocol, Stake -->
+      <section class="card chain-card">
+        <div class="card-header">
+          <h2>Cadeia &amp; Protocolo</h2>
+          <span class="count-badge">Preview</span>
+        </div>
+        <div class="chain-grid">
+          <div class="chain-block">
+            <span class="chain-label">Tip da cadeia</span>
+            <div class="chain-row"><span>Época</span><code id="tipEpoch">--</code></div>
+            <div class="chain-row"><span>Bloco</span><code id="tipHeight">--</code></div>
+            <div class="chain-row"><span>Slot</span><code id="tipSlot">--</code></div>
+            <div class="chain-row chain-hash"><span>Hash</span><code id="tipHash">--</code></div>
+          </div>
+          <div class="chain-block">
+            <span class="chain-label">Parâmetros do protocolo</span>
+            <div class="chain-row"><span>minFeeA</span><code id="protoMinFeeA">--</code></div>
+            <div class="chain-row"><span>minFeeB</span><code id="protoMinFeeB">--</code></div>
+            <div class="chain-row"><span>maxTxSize</span><code id="protoMaxTxSize">--</code></div>
+            <div class="chain-row"><span>keyDeposit</span><code id="protoKeyDeposit">--</code></div>
+          </div>
+          <div class="chain-block">
+            <span class="chain-label">Conta de stake</span>
+            <div class="chain-row chain-hash"><span>Endereço</span><code id="stakeAddress">--</code></div>
+            <div class="chain-row"><span>Controlado</span><code id="stakeAmount">--</code></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Transfer Section -->
+      <section class="card transfer-card">
+        <div class="card-header">
+          <h2>Transferência</h2>
+        </div>
+        <form id="transferForm" class="transfer-form">
+          <div class="form-group">
+            <label for="toAddress">Endereço de destino</label>
+            <input type="text" id="toAddress" placeholder="addr_test1..." required>
+          </div>
+          <div class="form-group">
+            <label for="amount">Valor (ADA)</label>
+            <input type="number" id="amount" placeholder="0.00" step="0.000001" min="0" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full" id="btnTransfer">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+              <path d="M.5 7.5a.5.5 0 0 1 .5-.5h8.793L7.646 4.854a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L9.793 8H1a.5.5 0 0 1-.5-.5z"/>
+            </svg>
+            Enviar ADA
+          </button>
+        </form>
+      </section>
+
+      <!-- Transaction Result -->
+      <section class="card result-card" id="resultCard" style="display: none;">
+        <div class="card-header">
+          <h2>Transação Enviada</h2>
+          <div class="success-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00FF88" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </div>
+        </div>
+        <div class="result-content">
+          <div class="result-item">
+            <span class="label">TXID</span>
+            <code id="txHash">...</code>
+          </div>
+          <a href="#" id="explorerLink" target="_blank" class="btn btn-link">
+            Ver no CardanoScan
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/>
+              <path d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/>
+            </svg>
+          </a>
+        </div>
+      </section>
+
+      <!-- Logs Section -->
+      <section class="card logs-card">
+        <div class="card-header">
+          <h2>Logs</h2>
+          <button class="btn btn-small" id="btnClearLogs">Limpar</button>
+        </div>
+        <div class="logs-content" id="logsContent">
+          <div class="log-entry">
+            <span class="log-time">--:--:--</span>
+            <span class="log-message">Aguardando operações...</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span>Cardano Preview Lab</span>
+      <span class="separator">|</span>
+      <span>Rede: Preview</span>
+    </footer>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">
+    <span id="toastMessage">Mensagem</span>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

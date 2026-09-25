@@ -1,0 +1,109 @@
+[2026-09-21T21:23:40.708Z] [1] Blockfrost conectado
+[2026-09-21T21:23:41.120Z] [2] Rede: Preview | Block 4684081 | Slot 123369778
+[2026-09-21T21:23:41.120Z] [3] Carteira ativa
+[2026-09-21T21:23:41.121Z] Endereço: addr_test1qpes2yu0mwltmztfwnj22kgmehn5gyp65cdmr4ep6q8wx5gncfyw6paqyhkla9fzh5y8v9rx0g8p362298fc898uajjs44fy5k
+[2026-09-21T21:23:41.121Z] 
+[FAUCET] Para obter tADA, acesse:
+[2026-09-21T21:23:41.121Z] https://testnets.cardano.org/en/testnets/cardano/overview/
+[2026-09-21T21:23:41.121Z] Use o endereço: addr_test1qpes2yu0mwltmztfwnj22kgmehn5gyp65cdmr4ep6q8wx5gncfyw6paqyhkla9fzh5y8v9rx0g8p362298fc898uajjs44fy5k
+[2026-09-21T21:23:41.121Z] Aguardando recebimento de fundos...
+[2026-09-21T21:23:41.122Z] 
+[BALANCE] Consultando saldo...
+[2026-09-21T21:23:41.500Z] Saldo: 19999.631507 ADA
+[2026-09-21T21:23:41.500Z] 
+[UTXOs] Consultando UTXOs...
+[2026-09-21T21:23:41.794Z] UTXOs disponíveis: 2 | Utilizáveis: 2
+[2026-09-21T21:23:41.794Z] 
+Detalhes dos UTXOs utilizáveis:
+[2026-09-21T21:23:41.795Z]   1. b0ae6ced59337190...#0 - 1.000000 ADA
+[2026-09-21T21:23:41.795Z]   2. b0ae6ced59337190...#1 - 19998.631507 ADA
+[2026-09-21T21:23:41.795Z] 
+[STAKE] Verificando conta de stake...
+[2026-09-21T21:23:42.087Z] Stake account encontrado
+[2026-09-21T21:23:42.088Z] 
+[PROTOCOL] Obtendo parâmetros...
+[2026-09-21T21:23:42.686Z] Parâmetros obtidos com sucesso
+[2026-09-21T21:23:42.687Z] 
+========================================
+[2026-09-21T21:23:42.687Z] FIM
+[2026-09-21T21:23:42.688Z] ========================================
+[2026-09-24T23:12:36.284Z] ========================================
+[2026-09-24T23:12:36.286Z] NOVA EXECUÇÃO — CARDANO PREVIEW LAB
+[2026-09-24T23:12:36.287Z] ========================================
+[2026-09-24T23:12:36.287Z] [1] Blockfrost conectado
+[2026-09-24T23:12:36.736Z] [2] Rede: Preview | Época: 1430 | Bloco: 4693771 | Slot: 123635552
+[2026-09-24T23:12:36.736Z]     Tip hash: ccb0564ce9140c79f4410ea8d400fed1718e456afbb688b40e387865c4f7f091
+[2026-09-24T23:12:36.737Z] [3] Carteira ativa
+[2026-09-24T23:12:36.738Z] Endereço: addr_test1qqa3qdlvtkq0thwekmucelwl8ac8mxcddd8g2nsm4h2rkysl60a36nwcylmuatzxchgqnuzr6xtdryumpp3hpd8x730st9k786
+[2026-09-24T23:12:36.738Z] 
+[FAUCET] Para obter tADA, acesse:
+[2026-09-24T23:12:36.738Z] https://testnets.cardano.org/en/testnets/cardano/overview/
+[2026-09-24T23:12:36.738Z] Use o endereço: addr_test1qqa3qdlvtkq0thwekmucelwl8ac8mxcddd8g2nsm4h2rkysl60a36nwcylmuatzxchgqnuzr6xtdryumpp3hpd8x730st9k786
+[2026-09-24T23:12:36.738Z] Aguardando recebimento de fundos...
+[2026-09-24T23:12:36.739Z] 
+[BALANCE] Consultando saldo...
+[2026-09-24T23:12:37.015Z] Saldo: 0.000000 ADA
+[2026-09-24T23:12:37.015Z] 
+[UTXOs] Consultando UTXOs...
+[2026-09-24T23:12:37.339Z] UTXOs disponíveis: 0 | Utilizáveis (>= 1 ADA): 0
+[2026-09-24T23:12:37.340Z] 
+[STAKE] Consultando conta de stake...
+[2026-09-24T23:12:37.633Z] Endereço de stake: stake_test1uq0a87cafhvz0a7w43rvt5qf7ppar9k3jwdsscmsknn0ghc2j4ug5
+[2026-09-24T23:12:37.634Z] Valor sob controle: 0 lovelace
+[2026-09-24T23:12:37.634Z] 
+[PROTOCOL] Parâmetros do protocolo...
+[2026-09-24T23:12:38.988Z] Época: 1430
+[2026-09-24T23:12:38.988Z] minFeeA: 44 lovelace/byte | minFeeB: 155381 lovelace
+[2026-09-24T23:12:38.988Z] maxTxSize: 16384 bytes
+[2026-09-24T23:12:38.989Z] keyDeposit: 2000000 | poolDeposit: 500000000
+[2026-09-24T23:12:38.989Z] 
+========================================
+[2026-09-24T23:12:38.990Z] FIM
+[2026-09-24T23:12:38.990Z] ========================================
+
+[2026-09-24T23:56:36.041Z] ========================================
+[2026-09-24T23:56:36.041Z] NOVA EXECUÇÃO — CARDANO PREVIEW LAB
+[2026-09-24T23:56:36.042Z] ========================================
+[2026-09-24T23:56:36.042Z] [1] Blockfrost conectado
+[2026-09-24T23:56:36.793Z] [2] Rede: Preview | Época: 1430 | Bloco: 4693874 | Slot: 123638180
+[2026-09-24T23:56:36.794Z]     Tip hash: 485adca563129f9b816c994e73eb8129d7582f6ebb789d177071f3e5f6816121
+[2026-09-24T23:56:36.794Z] [3] Carteira ativa
+[2026-09-24T23:56:36.794Z] Endereço: addr_test1qpes2yu0mwltmztfwnj22kgmehn5gyp65cdmr4ep6q8wx5gncfyw6paqyhkla9fzh5y8v9rx0g8p362298fc898uajjs44fy5k
+[2026-09-24T23:56:36.794Z] 
+[FAUCET] Para obter tADA, acesse:
+[2026-09-24T23:56:36.795Z] https://testnets.cardano.org/en/testnets/cardano/overview/
+[2026-09-24T23:56:36.795Z] Use o endereço: addr_test1qpes2yu0mwltmztfwnj22kgmehn5gyp65cdmr4ep6q8wx5gncfyw6paqyhkla9fzh5y8v9rx0g8p362298fc898uajjs44fy5k
+[2026-09-24T23:56:36.795Z] Aguardando recebimento de fundos...
+[2026-09-24T23:56:36.795Z] 
+[BALANCE] Consultando saldo...
+[2026-09-24T23:56:37.065Z] Saldo: 19998.431507 ADA
+[2026-09-24T23:56:37.065Z] 
+[UTXOs] Consultando UTXOs...
+[2026-09-24T23:56:37.446Z] UTXOs disponíveis: 1 | Utilizáveis (>= 1 ADA): 1
+[2026-09-24T23:56:37.447Z] 
+Detalhes dos UTXOs utilizáveis:
+[2026-09-24T23:56:37.447Z]   1. 1fb2dbb5137f655bf765229b611132a0a56057d8ecbc5a1b53353f2131c98add#1 - 19998.431507 ADA
+[2026-09-24T23:56:37.447Z] 
+[STAKE] Consultando conta de stake...
+[2026-09-24T23:56:37.721Z] Endereço de stake: stake_test1uqfuyj8dq7sztm07j53t6zrkz3n85rsca99zn5urjn7wefgzh8yn6
+[2026-09-24T23:56:37.722Z] Valor sob controle: 19998431507 lovelace
+[2026-09-24T23:56:37.722Z] 
+[PROTOCOL] Parâmetros do protocolo...
+[2026-09-24T23:56:38.318Z] Época: 1430
+[2026-09-24T23:56:38.318Z] minFeeA: 44 lovelace/byte | minFeeB: 155381 lovelace
+[2026-09-24T23:56:38.318Z] maxTxSize: 16384 bytes
+[2026-09-24T23:56:38.319Z] keyDeposit: 2000000 | poolDeposit: 500000000
+[2026-09-24T23:56:38.319Z] 
+Enviando 1 ADA para addr_test1qqa3qdlvtkq0thwekmucelwl8ac8mxcddd8g2nsm4h2rkysl60a36nwcylmuatzxchgqnuzr6xtdryumpp3hpd8x730st9k786...
+[2026-09-24T23:56:39.471Z] 
+========================================
+[2026-09-24T23:56:39.471Z] TRANSAÇÃO ENVIADA
+[2026-09-24T23:56:39.471Z] ========================================
+[2026-09-24T23:56:39.471Z] TXID: f9d4c14ebe3889b5f0b3a1f24cfabd295d51756532951009ad7740be29bc9b3a
+[2026-09-24T23:56:39.472Z] Explorer: https://preview.cardanoscan.io/transaction/f9d4c14ebe3889b5f0b3a1f24cfabd295d51756532951009ad7740be29bc9b3a
+[2026-09-24T23:56:39.472Z] ========================================
+[2026-09-24T23:56:39.472Z] 
+========================================
+[2026-09-24T23:56:39.472Z] FIM
+[2026-09-24T23:56:39.473Z] ========================================
+

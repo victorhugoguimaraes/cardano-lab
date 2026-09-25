@@ -1,0 +1,9 @@
+.env
+wallet.json
+node_modules/
+dist/
+*.js
+*.js.map
+*.d.ts
+!src/**/*.ts
+!frontend/js/*.js
