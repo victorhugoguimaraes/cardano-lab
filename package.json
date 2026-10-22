@@ -7,7 +7,8 @@
     "postinstall": "node scripts/fix-libsodium.mjs",
     "dev": "bun run core/cli.ts",
     "server": "bun run backend/server.ts",
-    "cli": "bun run backend/index.ts",
+    "cli": "bun run core/cli.ts",
+    "wallet:cli": "bun run backend/index.ts",
     "typecheck": "bunx tsc --noEmit",
     "test": "bun test"
   },
