@@ -1,0 +1,15 @@
+node_modules/
+.env
+.env.*
+!.env.example
+wallet.json
+qa-output/
+github-inspect/
+evidence/*.json
+evidence/*.txt
+dist/
+.DS_Store
+Thumbs.db
+.vscode/
+sources/
+AGENTS.md
