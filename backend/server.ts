@@ -8,7 +8,7 @@ import { AppError, errorMessage, toAppError } from './errors';
 import { mintFromConfiguredWallet, parseMintInput, verifyNftHash } from './minting';
 
 const PORT = Number(process.env.PORT) || 3001;
-const HOST = process.env.HOST || '127.0.0.1';
+const HOST = process.env.HOST || '0.0.0.0';
 const APP_ORIGIN = process.env.APP_ORIGIN || `http://localhost:${PORT}`;
 
 const MIME_TYPES: { [key: string]: string } = {

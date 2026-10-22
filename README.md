@@ -42,6 +42,27 @@ está aberto.
 Use apenas carteiras de teste e tADA. Nunca publique project IDs, mnemonic ou
 chaves privadas.
 
+## Publicação online
+
+O repositório já contém o fluxo de publicação do frontend no GitHub Pages e do
+backend Bun no Render Free. O Pages hospeda a interface; o Render mantém a API
+que conversa com o Blockfrost.
+
+1. No Render, crie um **Web Service** a partir deste repositório. O arquivo
+   `render.yaml` já informa Bun, o comando de instalação e o comando de início.
+2. No serviço do Render, configure `APP_ORIGIN` como
+   `https://victorhugoguimaraes.github.io` e aguarde a URL pública do serviço.
+3. No GitHub, abra **Settings > Secrets and variables > Actions > Variables** e
+   crie `CARDANO_API_URL` com a URL pública do Render, por exemplo
+   `https://cardano-lab-api.onrender.com`.
+4. Em **Settings > Pages**, selecione **GitHub Actions** como fonte. Cada push
+   na branch `main` publica uma nova versão.
+
+O plano gratuito do Render pode adormecer depois de um período sem acesso, então
+o primeiro carregamento depois da pausa pode levar cerca de um minuto. Ele é
+adequado para demonstrações e trabalhos acadêmicos; para uso contínuo, escolha
+um plano com serviço persistente.
+
 ## O que a aplicação oferece
 
 - Carteira Cardano com importação, geração e cópia do mnemonic.

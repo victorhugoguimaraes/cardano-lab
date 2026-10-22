@@ -9,7 +9,8 @@
     "server": "bun run backend/server.ts",
     "cli": "bun run core/cli.ts",
     "wallet:cli": "bun run backend/index.ts",
-    "typecheck": "bunx tsc --noEmit"
+    "typecheck": "bunx tsc --noEmit",
+    "pages:build": "bun scripts/build-pages.mjs"
   },
   "dependencies": {
     "@meshsdk/core": "1.8.14",

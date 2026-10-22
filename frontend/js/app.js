@@ -64,7 +64,10 @@ const elements = {
   stakeAmount: document.getElementById('stakeAmount'),
 };
 
-const API_BASE = window.location.protocol.startsWith('http') ? '/api' : 'http://localhost:3001/api';
+const configuredApiBase = window.CARDANO_LAB_CONFIG?.apiBaseUrl?.trim();
+const API_BASE = configuredApiBase
+  ? configuredApiBase.replace(/\/+$/, '')
+  : (window.location.protocol.startsWith('http') ? '/api' : 'http://localhost:3001/api');
 const WORD_COUNT = 24;
 let latestGeneratedMnemonic = [];
 let currentNetwork = localStorage.getItem('cardanoNetwork') || 'preview';

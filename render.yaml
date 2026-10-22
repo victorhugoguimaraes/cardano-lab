@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: cardano-lab-api
+    runtime: bun
+    plan: free
+    buildCommand: bun install --frozen-lockfile
+    startCommand: bun run server
+    healthCheckPath: /api/config/networks
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: APP_ORIGIN
+        sync: false
