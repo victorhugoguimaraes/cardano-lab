@@ -52,46 +52,14 @@ chaves privadas.
 - Registro e verificação de NFTs com hash SHA-256 e metadados CIP-25.
 - Alternância entre Preview e Preprod pela interface.
 
-## Para apresentar à professora
-
-O fluxo principal da demonstração é:
-
-1. Iniciar o servidor com `bun run server`.
-2. Mostrar a configuração de uma única rede na aba **Rede & logs**.
-3. Gerar ou importar uma carteira na aba **Carteira**.
-4. Consultar o tip, saldo e UTXOs.
-5. Abrir a faucet oficial e solicitar tADA.
-6. Atualizar os UTXOs e, se houver saldo, testar uma transferência.
-7. Demonstrar o módulo **Origem Digital** para calcular o hash e verificar a obra.
-
-## Testes e comandos úteis
-
-```bash
-bun run typecheck
-bun test
-bun run cli
-```
-
-O comando `cli` mantém o fluxo de terminal do projeto original. A aplicação web
-fica separada em `frontend/` e `backend/`, enquanto as funções compartilhadas
-ficam em `core/`.
-
 ## Organização do projeto
 
 ```text
 frontend/       Interface HTML, CSS, JavaScript e favicon
 backend/        API HTTP, carteira, Blockfrost e transações
 core/           Mesh SDK, metadados, políticas e comandos compartilhados
-tests/          Testes automatizados
 docs/           Documentação complementar
 ```
-
-## GitHub Pages
-
-O GitHub Pages pode hospedar uma página estática de apresentação, mas não executa
-o servidor Bun nem protege as chaves Blockfrost. Por isso, o uso completo desta
-aplicação deve ser feito localmente ou com o backend hospedado em um serviço
-próprio. Nunca coloque chaves Blockfrost em arquivos públicos do Pages.
 
 ## Licença
 

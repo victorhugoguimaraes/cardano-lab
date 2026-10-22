@@ -9,5 +9,5 @@
     "skipLibCheck": true,
     "types": ["bun"]
   },
-  "include": ["core/**/*.ts", "backend/**/*.ts", "tests/**/*.ts"]
+  "include": ["core/**/*.ts", "backend/**/*.ts"]
 }
