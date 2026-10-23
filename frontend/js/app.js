@@ -806,8 +806,8 @@ function updateNftGallery(assets) {
     const fallbackUrls = JSON.stringify(imageUrls.slice(1));
     const imageUrl = asset.image ? resolveAssetImageUrl(asset.image) : null;
     const image = imageUrl
-      ? `<img class="nft-image" src="${escapeHtml(imageUrl)}" data-fallbacks="${escapeHtml(fallbackUrls)}" alt="${escapeHtml(asset.assetName)}" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="handleNftImageError(this)">`
-      : '<div class="nft-image nft-image-placeholder" aria-hidden="true">◉</div>';
+      ? `<div class="nft-image-frame is-loading"><span class="nft-image-loading" aria-hidden="true">◉</span><img class="nft-image" src="${escapeHtml(imageUrl)}" data-fallbacks="${escapeHtml(fallbackUrls)}" alt="${escapeHtml(asset.assetName)}" loading="lazy" decoding="async" referrerpolicy="no-referrer" onload="handleNftImageLoad(this)" onerror="handleNftImageError(this)"></div>`
+      : '<div class="nft-image-frame is-unavailable"><div class="nft-image nft-image-placeholder" aria-label="Este NFT não possui uma imagem válida">◉</div></div>';
     const typeLabel = asset.isNft ? 'NFT' : 'Asset nativo';
     return `
       <article class="nft-item">
@@ -832,12 +832,17 @@ function resolveAssetImageUrl(url) {
   return `${API_BASE}${url.slice('/api'.length)}`;
 }
 
+function handleNftImageLoad(image) {
+  image.closest('.nft-image-frame')?.classList.remove('is-loading');
+}
+
 function handleNftImageError(image) {
   try {
     const fallbackUrls = JSON.parse(image.dataset.fallbacks || '[]');
     const nextUrl = fallbackUrls.shift();
     if (nextUrl) {
       image.dataset.fallbacks = JSON.stringify(fallbackUrls);
+      image.closest('.nft-image-frame')?.classList.add('is-loading');
       image.src = nextUrl;
       return;
     }
@@ -845,7 +850,8 @@ function handleNftImageError(image) {
     // Use the visual placeholder when metadata contains an invalid URL list.
   }
 
-  image.outerHTML = '<div class="nft-image nft-image-placeholder" aria-label="Imagem indisponível">◉</div>';
+  image.closest('.nft-image-frame')?.classList.replace('is-loading', 'is-unavailable');
+  image.remove();
 }
 
 async function handleNftGalleryClick(event) {

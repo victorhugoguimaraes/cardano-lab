@@ -325,18 +325,10 @@ body {
 }
 
 .nft-workspace {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 0;
-  margin-top: 1.5rem;
-}
-
-.nft-panel,
-.nft-mint-result {
-  padding: 1.5rem 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
+  margin-top: 1.25rem;
 }
 
 .origin-card {
@@ -348,28 +340,37 @@ body {
   margin: 0;
 }
 
-.nft-panel + .nft-panel,
+.nft-verify-section,
 .nft-mint-result {
-  border-top: 1px solid rgba(85, 223, 200, 0.16);
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(85, 223, 200, 0.18);
 }
 
-.nft-panel-header {
+.nft-section-title {
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
-  margin-bottom: 1rem;
+  margin: 0 0 1.15rem;
 }
 
-.nft-panel-header h3 {
+.nft-section-title h3 {
   margin: 0 0 0.2rem;
-  font-size: 1rem;
+  font-size: 1.02rem;
+  letter-spacing: -0.02em;
 }
 
-.nft-panel-header p {
+.nft-section-title p {
   margin: 0;
   color: var(--text-secondary);
   font-size: 0.82rem;
   line-height: 1.45;
+}
+
+.nft-section-title-secondary {
+  margin-top: 1.5rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid rgba(85, 223, 200, 0.12);
 }
 
 .nft-step {
@@ -390,6 +391,126 @@ body {
   border: 0;
   background: transparent;
 }
+
+.nft-form .nft-form-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0 1rem;
+}
+
+.nft-form-grid > .form-group,
+.nft-form-grid > .nft-fields {
+  min-width: 0;
+}
+
+.nft-form-grid > .form-group:has(#nftNetwork),
+.nft-form-grid > .form-group:has(#nftImageFile),
+.nft-form-grid > .form-group:has(#nftImageUri),
+.nft-form-grid > .form-group:has(#nftName),
+.nft-form-grid > .form-group:has(#nftDescription),
+.nft-form-grid > .nft-section-title {
+  grid-column: 1 / -1;
+}
+
+.nft-form-grid > .form-group:has(#nftImageFile) { margin-top: 0.15rem; }
+
+.nft-form-grid .form-group small {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+.nft-form-grid input,
+.nft-form-grid select,
+.nft-form-grid textarea,
+.nft-verify-form input,
+.nft-verify-form select {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.9rem;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid rgba(129, 170, 188, 0.24);
+  border-radius: 0.7rem;
+  background-color: #081a28;
+  color: var(--text-primary);
+  font: 500 0.875rem var(--font-sans);
+  accent-color: var(--accent);
+}
+
+.nft-form-grid textarea { min-height: 6.5rem; resize: vertical; }
+
+.nft-form-grid select,
+.nft-verify-form select {
+  appearance: none;
+  padding-right: 2.6rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2387a8b4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+}
+
+.nft-form-grid select option,
+.nft-verify-form select option { background: #0b1d2c; color: var(--text-primary); }
+
+.nft-form-grid input:focus-visible,
+.nft-form-grid select:focus-visible,
+.nft-form-grid textarea:focus-visible,
+.nft-verify-form input:focus-visible,
+.nft-verify-form select:focus-visible {
+  outline: 2px solid rgba(85, 223, 200, 0.75);
+  outline-offset: 2px;
+}
+
+.nft-form-grid input[type="file"],
+.nft-verify-form input[type="file"] {
+  min-height: auto;
+  padding: 0.55rem;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+}
+
+.nft-form-grid input[type="file"]::file-selector-button,
+.nft-verify-form input[type="file"]::file-selector-button {
+  margin-right: 0.75rem;
+  padding: 0.6rem 0.85rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: #193b50;
+  color: var(--text-primary);
+  font: 600 0.78rem var(--font-sans);
+  cursor: pointer;
+}
+
+.nft-submit-area {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border: 1px solid rgba(85, 223, 200, 0.17);
+  border-radius: 0.85rem;
+  background: rgba(4, 17, 29, 0.42);
+}
+
+.nft-submit-area p {
+  max-width: 48ch;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.nft-submit-area .btn,
+.nft-verify-form > .btn {
+  min-height: 2.9rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.65rem;
+  white-space: nowrap;
+}
+
+.nft-verify-form { display: grid; gap: 1rem; }
+.nft-verify-form .nft-fields { margin-bottom: 0; }
+.nft-verify-form .form-group { min-width: 0; }
 
 .nft-form h3 {
   margin: 0 0 1rem;
@@ -740,12 +861,44 @@ body {
   border-color: var(--accent);
 }
 
+.nft-image-frame {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: linear-gradient(145deg, #123145, #0b1d2c);
+}
+
 .nft-image {
   display: block;
   width: 100%;
   aspect-ratio: 1;
   object-fit: cover;
-  background: linear-gradient(135deg, var(--bg-elevated), var(--accent-dim));
+  background: transparent;
+}
+
+.nft-image-loading {
+  position: absolute;
+  z-index: 1;
+  color: var(--accent);
+  font-size: 2.5rem;
+  line-height: 1;
+  animation: nft-image-pulse 1.15s ease-in-out infinite;
+}
+
+.nft-image-frame.is-loading .nft-image {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+}
+
+.nft-image-frame:not(.is-loading) .nft-image-loading { display: none; }
+
+.nft-image-frame.is-unavailable .nft-image-loading {
+  animation: none;
+  opacity: 0.55;
 }
 
 .nft-image-placeholder {
@@ -753,6 +906,11 @@ body {
   place-items: center;
   color: var(--accent);
   font-size: 3rem;
+}
+
+@keyframes nft-image-pulse {
+  0%, 100% { opacity: 0.35; transform: scale(0.86); }
+  50% { opacity: 1; transform: scale(1.08); }
 }
 
 .nft-item-body {

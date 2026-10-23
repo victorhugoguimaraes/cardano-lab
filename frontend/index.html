@@ -201,12 +201,12 @@
         </div>
         <p class="section-description">Calcule a identidade do arquivo, registre a declaração criativa e verifique a obra depois da cunhagem.</p>
         <div class="nft-workspace">
-          <div class="nft-panel">
-            <div class="nft-panel-header">
-              <span class="nft-step">01</span>
-              <div><h3>Cunhar uma obra</h3><p>Registre o arquivo, o contexto criativo e a imagem pública.</p></div>
+          <form id="nftMintForm" class="nft-form">
+            <div class="nft-section-title">
+              <span class="nft-step" aria-hidden="true">A</span>
+              <div><h3>Dados da obra</h3><p>Escolha a rede, o arquivo e os dados que identificam a criação.</p></div>
             </div>
-            <form id="nftMintForm" class="nft-form">
+            <div class="nft-form-grid">
             <div class="form-group">
               <label for="nftNetwork">Rede</label>
               <select id="nftNetwork">
@@ -217,43 +217,52 @@
             <div class="form-group">
               <label for="nftImageFile">Arquivo da obra</label>
               <input type="file" id="nftImageFile" accept="image/*" required>
-              <small id="nftFileHash">O hash SHA-256 será calculado no navegador.</small>
+              <small id="nftFileHash">Selecione a imagem original. O código de integridade será calculado aqui.</small>
             </div>
             <div class="form-group">
               <label for="nftImageUri">URI pública da imagem</label>
               <input type="text" id="nftImageUri" placeholder="ipfs://... ou CID do Pinata" required>
-              <small>Cole a URI completa ou somente o CID. O CID será convertido automaticamente para ipfs://.</small>
+              <small>Cole o link IPFS ou CID da imagem enviada ao Pinata.</small>
             </div>
             <div class="nft-fields">
-              <div class="form-group"><label for="nftAssetName">Asset name</label><input id="nftAssetName" value="ORIGEM0001" required></div>
-              <div class="form-group"><label for="nftMediaType">MIME type</label><input id="nftMediaType" value="image/png" required></div>
+              <div class="form-group"><label for="nftAssetName">Identificador do ativo</label><input id="nftAssetName" value="ORIGEM0001" required></div>
+              <div class="form-group"><label for="nftMediaType">Formato da imagem</label><select id="nftMediaType"><option value="image/png">PNG</option><option value="image/jpeg">JPEG</option><option value="image/webp">WebP</option><option value="image/gif">GIF</option></select></div>
             </div>
             <div class="form-group"><label for="nftName">Nome da obra</label><input id="nftName" placeholder="Origem Digital #001" required></div>
             <div class="form-group"><label for="nftDescription">Descrição</label><textarea id="nftDescription" rows="2" required></textarea></div>
+            <div class="nft-section-title nft-section-title-secondary">
+              <span class="nft-step" aria-hidden="true">B</span>
+              <div><h3>Autoria e registro</h3><p>Descreva o processo criativo e o período de validade.</p></div>
+            </div>
             <div class="nft-fields">
               <div class="form-group"><label for="nftCreator">Criador</label><input id="nftCreator" placeholder="Pseudônimo" required></div>
-              <div class="form-group"><label for="nftCreationMethod">Processo</label><select id="nftCreationMethod"><option>sem IA</option><option selected>IA assistida</option><option>gerada por IA</option></select></div>
+              <div class="form-group"><label for="nftCreationMethod">Uso de inteligência artificial</label><select id="nftCreationMethod"><option>sem IA</option><option selected>IA assistida</option><option>gerada por IA</option></select></div>
             </div>
             <div class="nft-fields">
-              <div class="form-group"><label for="nftDuration">Prazo da política (dias)</label><input type="number" id="nftDuration" value="30" min="1" required></div>
-              <div class="form-group"><label for="nftProject">Projeto</label><input id="nftProject" value="Origem Digital" required></div>
+              <div class="form-group"><label for="nftDuration">Validade da política (dias)</label><input type="number" id="nftDuration" value="30" min="1" required></div>
+              <div class="form-group"><label for="nftProject">Coleção ou projeto</label><input id="nftProject" value="Origem Digital" required></div>
             </div>
-            <button type="submit" class="btn btn-primary btn-full" id="btnNftMint">Preparar e cunhar</button>
-            </form>
-          </div>
-          <div class="nft-panel">
-            <div class="nft-panel-header">
-              <span class="nft-step">02</span>
-              <div><h3>Verificar uma obra</h3><p>Compare o arquivo original com o hash publicado no ativo.</p></div>
             </div>
-            <form id="nftVerifyForm" class="nft-form nft-verify-form">
-            <div class="form-group"><label for="nftVerifyNetwork">Rede</label><select id="nftVerifyNetwork"><option value="preview">Preview</option><option value="preprod">Preprod</option></select></div>
-            <div class="form-group"><label for="nftAssetUnit">Asset unit</label><input id="nftAssetUnit" placeholder="policyId + assetNameHex" required></div>
-            <div class="form-group"><label for="nftVerifyFile">Arquivo para comparar</label><input type="file" id="nftVerifyFile" accept="image/*" required></div>
-            <button type="submit" class="btn btn-secondary btn-full" id="btnNftVerify">Verificar correspondência</button>
-            <div id="nftVerifyResult" class="nft-result" role="status"></div>
+            <div class="nft-submit-area">
+              <p>A cunhagem cria um ativo na rede selecionada e exige uma carteira configurada.</p>
+              <button type="submit" class="btn btn-primary" id="btnNftMint">Preparar e cunhar</button>
+            </div>
+          </form>
+          <section class="nft-verify-section" aria-labelledby="nftVerifyTitle">
+            <div class="nft-section-title">
+              <span class="nft-step" aria-hidden="true">C</span>
+              <div><h3 id="nftVerifyTitle">Verificar uma obra</h3><p>Compare um arquivo com o código publicado no NFT.</p></div>
+            </div>
+            <form id="nftVerifyForm" class="nft-verify-form">
+              <div class="nft-fields">
+                <div class="form-group"><label for="nftVerifyNetwork">Rede do NFT</label><select id="nftVerifyNetwork"><option value="preview">Preview</option><option value="preprod">Preprod</option></select></div>
+                <div class="form-group"><label for="nftAssetUnit">Identificador do NFT</label><input id="nftAssetUnit" placeholder="policyId + assetNameHex" required></div>
+              </div>
+              <div class="form-group"><label for="nftVerifyFile">Arquivo original</label><input type="file" id="nftVerifyFile" accept="image/*" required></div>
+              <button type="submit" class="btn btn-secondary" id="btnNftVerify">Verificar arquivo</button>
+              <div id="nftVerifyResult" class="nft-result" role="status"></div>
             </form>
-          </div>
+          </section>
           <section id="nftMintResult" class="nft-mint-result" style="display: none" aria-live="polite">
             <div class="nft-panel-header">
               <span class="nft-step">03</span>

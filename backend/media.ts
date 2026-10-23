@@ -14,7 +14,9 @@ function safeIpfsPath(value: string): string | null {
   }
 
   const [cid, ...segments] = decoded.split('/');
-  const validCid = /^(Qm[1-9A-HJ-NP-Za-km-z]{44}|bafy[a-z2-7]{20,})$/.test(cid ?? '');
+  // CIDv0 is base58btc and starts with Qm. CIDv1 may use several codecs,
+  // so its base32 multibase identifier is not limited to the common `bafy` prefix.
+  const validCid = /^(Qm[1-9A-HJ-NP-Za-km-z]{44}|b[a-z2-7]{20,})$/.test(cid ?? '');
   const validPath = segments.every((segment) => /^[a-zA-Z0-9._~-]+$/.test(segment));
   return validCid && validPath ? decoded : null;
 }
