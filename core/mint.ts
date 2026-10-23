@@ -45,9 +45,12 @@ export async function mintOneNft(
   const policyId = resolveScriptHash(forgingScript);
   const tokenNameHex = stringToHex(input.assetName);
   const unit = policyId + tokenNameHex;
+  const imageUri = /^[a-zA-Z0-9]+$/.test(input.imageUri) && input.imageUri.length >= 32
+    ? `ipfs://${input.imageUri}`
+    : input.imageUri;
   const metadataItem: NftMetadata = {
     name: input.name,
-    image: input.imageUri,
+    image: imageUri,
     mediaType: input.mediaType,
     description: input.description,
     creator: input.creator,

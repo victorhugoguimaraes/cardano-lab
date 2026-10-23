@@ -904,10 +904,16 @@ async function handleNftMint(event) {
   if (!file) return;
   const fileHash = await sha256File(file);
   elements.nftFileHash.textContent = `SHA-256: ${fileHash}`;
+  const imageUri = normalizeImageUri(document.getElementById('nftImageUri').value);
+  if (!imageUri) {
+    showToast('Informe a URI ou o CID da imagem');
+    return;
+  }
+
   const payload = {
     network: document.getElementById('nftNetwork').value,
     assetName: document.getElementById('nftAssetName').value.trim(),
-    imageUri: document.getElementById('nftImageUri').value.trim(),
+    imageUri,
     mediaType: document.getElementById('nftMediaType').value.trim(),
     name: document.getElementById('nftName').value.trim(),
     description: document.getElementById('nftDescription').value.trim(),
@@ -933,6 +939,15 @@ async function handleNftMint(event) {
   } finally {
     setLoading(document.getElementById('btnNftMint'), false);
   }
+}
+
+function normalizeImageUri(value) {
+  const normalized = value.trim();
+  if (!normalized) return '';
+  if (/^[a-zA-Z0-9]+$/.test(normalized) && normalized.length >= 32) {
+    return `ipfs://${normalized}`;
+  }
+  return normalized;
 }
 
 async function handleNftVerify(event) {

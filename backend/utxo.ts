@@ -60,6 +60,9 @@ function browserImageUrls(image: string | null): string[] {
     ];
   }
   if (normalized.startsWith('ar://')) return [`https://arweave.net/${normalized.slice(5)}`];
+  if (/^[a-zA-Z0-9]+$/.test(normalized) && normalized.length >= 32) {
+    return browserImageUrls(`ipfs://${normalized}`);
+  }
   return [normalized];
 }
 

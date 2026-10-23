@@ -217,7 +217,8 @@
             </div>
             <div class="form-group">
               <label for="nftImageUri">URI pública da imagem</label>
-              <input type="url" id="nftImageUri" placeholder="ipfs://..." required>
+              <input type="text" id="nftImageUri" placeholder="ipfs://... ou CID do Pinata" required>
+              <small>Cole a URI completa ou somente o CID. O CID será convertido automaticamente para ipfs://.</small>
             </div>
             <div class="nft-fields">
               <div class="form-group"><label for="nftAssetName">Asset name</label><input id="nftAssetName" value="ORIGEM0001" required></div>

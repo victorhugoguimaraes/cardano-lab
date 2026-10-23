@@ -17,6 +17,11 @@ function requiredString(body: Record<string, unknown>, field: string): string {
   return value.trim();
 }
 
+function normalizeImageUri(value: string): string {
+  if (/^[a-zA-Z0-9]+$/.test(value) && value.length >= 32) return `ipfs://${value}`;
+  return value;
+}
+
 export function parseMintInput(body: Record<string, unknown>): MintInput {
   const network = body.network === 'preview' || body.network === 'preprod' ? body.network : null;
   const creationMethod = CREATION_METHODS.includes(body.creationMethod as typeof CREATION_METHODS[number])
@@ -36,7 +41,7 @@ export function parseMintInput(body: Record<string, unknown>): MintInput {
   return {
     network,
     assetName: requiredString(body, 'assetName'),
-    imageUri: requiredString(body, 'imageUri'),
+    imageUri: normalizeImageUri(requiredString(body, 'imageUri')),
     mediaType: requiredString(body, 'mediaType'),
     name: requiredString(body, 'name'),
     description: requiredString(body, 'description'),

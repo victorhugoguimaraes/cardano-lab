@@ -7,24 +7,6 @@ O laboratório foi pensado para a aula: a pessoa configura a rede pela interface
 cria ou importa uma carteira de teste, consulta seus dados e acompanha cada etapa
 sem colocar credenciais no código.
 
-## Acesso online
-
-A versão online pode ser acessada em:
-
-<https://victorhugoguimaraes.github.io/cardano-lab/>
-
-Essa opção permite testar a aplicação diretamente pelo navegador, sem instalar
-nada. O servidor pode levar alguns minutos para acordar. Depois, na aba
-**Rede & logs**:
-
-1. Cole a chave Preview e/ou Preprod do Blockfrost.
-2. Clique em **Salvar APIs**.
-3. Escolha a rede liberada no seletor do topo.
-4. Acesse **Carteira** para importar suas 24 palavras ou gerar uma carteira de teste.
-
-Use somente carteiras de teste e tADA. As chaves são cadastradas pela
-interface e não devem ser incluídas no código ou em arquivos públicos.
-
 ## Usar localmente
 
 ### Pré-requisitos
