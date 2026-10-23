@@ -468,7 +468,9 @@ async function apiCall(endpoint, method = 'GET', body = null, includeNetwork = t
       throw {
         code: 'CONNECTION_ERROR',
         message: 'Não foi possível conectar ao servidor',
-        details: 'Verifique se o servidor está rodando em http://localhost:3001',
+        details: API_BASE.startsWith('/')
+          ? 'Verifique se o servidor local está rodando em http://localhost:3001.'
+          : `Verifique se a API está disponível em ${API_BASE}.`,
       };
     }
 
