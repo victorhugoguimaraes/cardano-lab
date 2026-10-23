@@ -789,8 +789,9 @@ function updateNftGallery(assets) {
   }
 
   elements.nftGallery.innerHTML = assets.map((asset) => {
+    const fallbackUrls = JSON.stringify((asset.imageUrls || []).slice(1));
     const image = asset.image
-      ? `<img class="nft-image" src="${escapeHtml(asset.image)}" alt="${escapeHtml(asset.assetName)}" loading="lazy" onerror="this.closest('.nft-item').classList.add('image-missing')">`
+      ? `<img class="nft-image" src="${escapeHtml(asset.image)}" data-fallbacks="${escapeHtml(fallbackUrls)}" alt="${escapeHtml(asset.assetName)}" loading="lazy" onerror="handleNftImageError(this)">`
       : '<div class="nft-image nft-image-placeholder" aria-hidden="true">◉</div>';
     const typeLabel = asset.isNft ? 'NFT' : 'Asset nativo';
     return `
@@ -809,6 +810,22 @@ function updateNftGallery(assets) {
       </article>
     `;
   }).join('');
+}
+
+function handleNftImageError(image) {
+  try {
+    const fallbackUrls = JSON.parse(image.dataset.fallbacks || '[]');
+    const nextUrl = fallbackUrls.shift();
+    if (nextUrl) {
+      image.dataset.fallbacks = JSON.stringify(fallbackUrls);
+      image.src = nextUrl;
+      return;
+    }
+  } catch {
+    // Use the visual placeholder when metadata contains an invalid URL list.
+  }
+
+  image.outerHTML = '<div class="nft-image nft-image-placeholder" aria-label="Imagem indisponível">◉</div>';
 }
 
 async function handleNftGalleryClick(event) {

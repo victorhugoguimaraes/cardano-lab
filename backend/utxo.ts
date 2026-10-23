@@ -24,6 +24,7 @@ export interface WalletAssetView {
   fingerprint: string | null;
   isNft: boolean;
   image: string | null;
+  imageUrls: string[];
   description: string | null;
 }
 
@@ -47,10 +48,19 @@ function assetDisplayName(assetNameHex: string): string {
   }
 }
 
-function browserImageUrl(image: string | null): string | null {
-  if (!image) return null;
-  if (image.startsWith('ipfs://')) return `https://ipfs.io/ipfs/${image.slice(7)}`;
-  return image;
+function browserImageUrls(image: string | null): string[] {
+  if (!image) return [];
+  const normalized = image.trim();
+  if (normalized.startsWith('ipfs://')) {
+    const cidPath = normalized.replace(/^ipfs:\/\/(?:ipfs\/)?/, '');
+    return [
+      `https://nftstorage.link/ipfs/${cidPath}`,
+      `https://ipfs.io/ipfs/${cidPath}`,
+      `https://cloudflare-ipfs.com/ipfs/${cidPath}`,
+    ];
+  }
+  if (normalized.startsWith('ar://')) return [`https://arweave.net/${normalized.slice(5)}`];
+  return [normalized];
 }
 
 export async function getWalletAssets(address: string, network: CardanoNetwork = defaultNetwork()): Promise<WalletAssetView[]> {
@@ -72,7 +82,7 @@ export async function getWalletAssets(address: string, network: CardanoNetwork =
 
       const onchain = details?.onchain_metadata;
       const metadata = details?.metadata;
-      const image = browserImageUrl(metadataText(onchain, 'image') || metadataText(metadata, 'image'));
+      const imageUrls = browserImageUrls(metadataText(onchain, 'image') || metadataText(metadata, 'image'));
       const description = metadataText(onchain, 'description') || metadataText(metadata, 'description');
 
       return {
@@ -83,7 +93,8 @@ export async function getWalletAssets(address: string, network: CardanoNetwork =
         quantity: amount.quantity,
         fingerprint: details?.fingerprint ?? null,
         isNft: amount.quantity === '1' || Boolean(details?.onchain_metadata_standard),
-        image,
+        image: imageUrls[0] ?? null,
+        imageUrls,
         description,
       };
     }));
