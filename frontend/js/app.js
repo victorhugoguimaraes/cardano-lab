@@ -802,9 +802,11 @@ function updateNftGallery(assets) {
   }
 
   elements.nftGallery.innerHTML = assets.map((asset) => {
-    const fallbackUrls = JSON.stringify((asset.imageUrls || []).slice(1));
-    const image = asset.image
-      ? `<img class="nft-image" src="${escapeHtml(asset.image)}" data-fallbacks="${escapeHtml(fallbackUrls)}" alt="${escapeHtml(asset.assetName)}" loading="lazy" onerror="handleNftImageError(this)">`
+    const imageUrls = (asset.imageUrls || []).map(resolveAssetImageUrl);
+    const fallbackUrls = JSON.stringify(imageUrls.slice(1));
+    const imageUrl = asset.image ? resolveAssetImageUrl(asset.image) : null;
+    const image = imageUrl
+      ? `<img class="nft-image" src="${escapeHtml(imageUrl)}" data-fallbacks="${escapeHtml(fallbackUrls)}" alt="${escapeHtml(asset.assetName)}" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="handleNftImageError(this)">`
       : '<div class="nft-image nft-image-placeholder" aria-hidden="true">◉</div>';
     const typeLabel = asset.isNft ? 'NFT' : 'Asset nativo';
     return `
@@ -823,6 +825,11 @@ function updateNftGallery(assets) {
       </article>
     `;
   }).join('');
+}
+
+function resolveAssetImageUrl(url) {
+  if (!url.startsWith('/api/')) return url;
+  return `${API_BASE}${url.slice('/api'.length)}`;
 }
 
 function handleNftImageError(image) {

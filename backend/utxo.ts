@@ -54,6 +54,7 @@ function browserImageUrls(image: string | null): string[] {
   if (normalized.startsWith('ipfs://')) {
     const cidPath = normalized.replace(/^ipfs:\/\/(?:ipfs\/)?/, '');
     return [
+      `/api/media/ipfs/${encodeURIComponent(cidPath)}`,
       `https://gateway.pinata.cloud/ipfs/${cidPath}`,
       `https://nftstorage.link/ipfs/${cidPath}`,
       `https://ipfs.io/ipfs/${cidPath}`,

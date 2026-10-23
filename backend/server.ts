@@ -6,6 +6,7 @@ import { transferADA } from './transaction';
 import { configureApiKeys, configuredApiKeyLabels, configuredNetworks, defaultNetwork, getTip, getProtocolParameters, type CardanoNetwork, validateApiKeyForNetwork } from './blockfrost';
 import { AppError, errorMessage, toAppError } from './errors';
 import { mintFromConfiguredWallet, parseMintInput, verifyNftHash } from './minting';
+import { loadIpfsImage } from './media';
 
 const PORT = Number(process.env.PORT) || 3001;
 const HOST = process.env.HOST || '0.0.0.0';
@@ -81,14 +82,17 @@ function serveStatic(pathname: string): Response {
 
   try {
     if (fs.existsSync(fullPath)) {
-      return new Response(fs.readFileSync(fullPath), { status: 200, headers: { 'Content-Type': contentType } });
+      return new Response(fs.readFileSync(fullPath), {
+        status: 200,
+        headers: { 'Content-Type': contentType, 'Cache-Control': 'no-store' },
+      });
     }
 
     const indexPath = path.join(__dirname, '..', 'frontend', 'index.html');
     if (fs.existsSync(indexPath)) {
       return new Response(fs.readFileSync(indexPath), {
         status: 200,
-        headers: { 'Content-Type': 'text/html; charset=utf-8' },
+        headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' },
       });
     }
 
@@ -208,6 +212,11 @@ async function handleApi(method: string, apiPath: string, req: Request, url: URL
     } catch (error) {
       return sendAppError(error, 'NFTS_ERROR', 'Falha ao consultar NFTs da carteira');
     }
+  }
+
+  if (method === 'GET' && apiPath.startsWith('/media/ipfs/')) {
+    const image = await loadIpfsImage(apiPath.replace('/media/ipfs/', ''));
+    return image ?? sendError('NFT_IMAGE_UNAVAILABLE', 'Imagem NFT indisponível', 'Não foi possível obter esta imagem nos gateways IPFS.', 502);
   }
 
   if (method === 'POST' && apiPath === '/wallet/import') {
