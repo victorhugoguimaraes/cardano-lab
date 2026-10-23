@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { importWalletWithMnemonic, generateWalletForAPI, loadWallet } from './wallet';
-import { assertPreviewAddress, getAddressBalance, getAddressUtxos, getStakeAccount } from './utxo';
+import { assertPreviewAddress, getAddressBalance, getAddressUtxos, getStakeAccount, getWalletAssets } from './utxo';
 import { transferADA } from './transaction';
 import { configureApiKeys, configuredApiKeyLabels, configuredNetworks, defaultNetwork, getTip, getProtocolParameters, type CardanoNetwork, validateApiKeyForNetwork } from './blockfrost';
 import { AppError, errorMessage, toAppError } from './errors';
@@ -194,6 +194,19 @@ async function handleApi(method: string, apiPath: string, req: Request, url: URL
       return sendJSON({ utxos });
     } catch (error) {
       return sendAppError(error, 'UTXO_ERROR', 'Falha ao consultar UTXOs');
+    }
+  }
+
+  if (method === 'GET' && apiPath.startsWith('/nfts/')) {
+    const address = apiPath.replace('/nfts/', '');
+    if (!isValidAddress(address)) {
+      return sendError('INVALID_ADDRESS', 'Endereço inválido', 'O endereço deve começar com "addr_"');
+    }
+    try {
+      const assets = await getWalletAssets(address, network);
+      return sendJSON({ assets });
+    } catch (error) {
+      return sendAppError(error, 'NFTS_ERROR', 'Falha ao consultar NFTs da carteira');
     }
   }
 

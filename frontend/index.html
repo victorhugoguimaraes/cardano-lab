@@ -74,6 +74,7 @@
       <nav class="tab-nav" aria-label="Seções da aplicação">
         <button class="tab-button active" type="button" data-tab-target="overview" aria-selected="true">Visão geral</button>
         <button class="tab-button" type="button" data-tab-target="wallet" aria-selected="false">Carteira</button>
+        <button class="tab-button" type="button" data-tab-target="nfts" aria-selected="false">NFTs</button>
         <button class="tab-button" type="button" data-tab-target="origin" aria-selected="false">Origem Digital</button>
         <button class="tab-button" type="button" data-tab-target="network" aria-selected="false">Rede &amp; logs</button>
       </nav>
@@ -165,6 +166,26 @@
           <div class="empty-state">
             <p>Nenhum UTXO disponível</p>
             <span>Gere uma carteira e solicite tADA na faucet</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card nfts-card" data-tab="nfts">
+        <div class="card-header">
+          <div>
+            <span class="section-kicker">Coleção da carteira</span>
+            <h2>NFTs e assets nativos</h2>
+          </div>
+          <div class="card-header-actions">
+            <span class="count-badge" id="nftCount">0</span>
+            <button class="btn btn-small" id="btnRefreshNfts" type="button">Atualizar</button>
+          </div>
+        </div>
+        <p class="section-description">Veja os NFTs mantidos pela carteira na rede selecionada. A imagem aparece quando o metadata público fornece uma URL.</p>
+        <div class="nft-gallery" id="nftGallery">
+          <div class="empty-state">
+            <p>Nenhum NFT carregado</p>
+            <span>Importe uma carteira e atualize a coleção</span>
           </div>
         </div>
       </section>

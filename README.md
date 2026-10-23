@@ -88,6 +88,7 @@ um plano com serviço persistente.
 - Carteira Cardano com importação, geração e cópia do mnemonic.
 - Consulta de saldo, conta de stake e UTXOs atualizados.
 - Cópia rápida da referência de cada UTXO.
+- Aba de visualização dos NFTs e assets nativos da carteira.
 - Faucet oficial para receber tADA.
 - Transferência de ADA de teste com assinatura local.
 - Registro e verificação de NFTs com hash SHA-256 e metadados CIP-25.

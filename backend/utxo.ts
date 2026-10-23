@@ -15,6 +15,85 @@ export interface StakeAccountView {
   controlledAmount: string | null;
 }
 
+export interface WalletAssetView {
+  unit: string;
+  policyId: string;
+  assetNameHex: string;
+  assetName: string;
+  quantity: string;
+  fingerprint: string | null;
+  isNft: boolean;
+  image: string | null;
+  description: string | null;
+}
+
+function metadataText(metadata: unknown, key: string): string | null {
+  if (!metadata || typeof metadata !== 'object') return null;
+  const value = (metadata as Record<string, unknown>)[key];
+  if (typeof value === 'string') return value;
+  if (Array.isArray(value) && value.every((item) => typeof item === 'string')) {
+    return value.join('');
+  }
+  return null;
+}
+
+function assetDisplayName(assetNameHex: string): string {
+  if (!assetNameHex) return 'NFT sem nome';
+  try {
+    const decoded = Buffer.from(assetNameHex, 'hex').toString('utf8').trim();
+    return decoded || `Asset ${assetNameHex.slice(0, 12)}...`;
+  } catch {
+    return `Asset ${assetNameHex.slice(0, 12)}...`;
+  }
+}
+
+function browserImageUrl(image: string | null): string | null {
+  if (!image) return null;
+  if (image.startsWith('ipfs://')) return `https://ipfs.io/ipfs/${image.slice(7)}`;
+  return image;
+}
+
+export async function getWalletAssets(address: string, network: CardanoNetwork = defaultNetwork()): Promise<WalletAssetView[]> {
+  try {
+    assertPreviewAddress(address);
+    const account = await getBlockfrost(network).addressesExtended(address);
+    const assets = account.amount.filter((amount) => amount.unit !== 'lovelace' && BigInt(amount.quantity) > 0);
+
+    return await Promise.all(assets.map(async (amount) => {
+      const [policyId, assetNameHex] = [amount.unit.slice(0, 56), amount.unit.slice(56)];
+      let details: Awaited<ReturnType<ReturnType<typeof getBlockfrost>['assetsById']>> | null = null;
+      if (amount.quantity === '1' || amount.has_nft_onchain_metadata) {
+        try {
+          details = await getBlockfrost(network).assetsById(amount.unit);
+        } catch {
+          details = null;
+        }
+      }
+
+      const onchain = details?.onchain_metadata;
+      const metadata = details?.metadata;
+      const image = browserImageUrl(metadataText(onchain, 'image') || metadataText(metadata, 'image'));
+      const description = metadataText(onchain, 'description') || metadataText(metadata, 'description');
+
+      return {
+        unit: amount.unit,
+        policyId,
+        assetNameHex,
+        assetName: metadataText(onchain, 'name') || metadataText(metadata, 'name') || assetDisplayName(assetNameHex),
+        quantity: amount.quantity,
+        fingerprint: details?.fingerprint ?? null,
+        isNft: amount.quantity === '1' || Boolean(details?.onchain_metadata_standard),
+        image,
+        description,
+      };
+    }));
+  } catch (error) {
+    if (error instanceof AppError) throw error;
+    if (httpStatus(error) === 404) return [];
+    throw toAppError(error, 'ASSETS_FETCH_FAILED', 'Falha ao consultar NFTs da carteira');
+  }
+}
+
 export function assertPreviewAddress(address: string): void {
   if (!address || !address.startsWith('addr_test1')) {
     throw new AppError(

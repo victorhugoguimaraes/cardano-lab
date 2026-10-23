@@ -41,6 +41,9 @@ const elements = {
   btnCopyGeneratedMnemonic: document.getElementById('btnCopyGeneratedMnemonic'),
   utxoCount: document.getElementById('utxoCount'),
   utxosList: document.getElementById('utxosList'),
+  nftCount: document.getElementById('nftCount'),
+  nftGallery: document.getElementById('nftGallery'),
+  btnRefreshNfts: document.getElementById('btnRefreshNfts'),
   transferForm: document.getElementById('transferForm'),
   toAddress: document.getElementById('toAddress'),
   amount: document.getElementById('amount'),
@@ -105,6 +108,7 @@ function init() {
   elements.btnNewWallet.addEventListener('click', createNewWallet);
   elements.btnRefresh.addEventListener('click', refreshData);
   elements.btnRefreshUtxos.addEventListener('click', refreshUtxos);
+  elements.btnRefreshNfts.addEventListener('click', refreshNfts);
   elements.nftMintForm.addEventListener('submit', handleNftMint);
   elements.nftVerifyForm.addEventListener('submit', handleNftVerify);
   elements.btnFaucet.addEventListener('click', openFaucet);
@@ -113,6 +117,7 @@ function init() {
   elements.mnemonicForm.addEventListener('submit', handleMnemonicImport);
   elements.btnCopyMnemonic.addEventListener('click', copyMnemonic);
   elements.utxosList.addEventListener('click', handleUtxoListClick);
+  elements.nftGallery.addEventListener('click', handleNftGalleryClick);
   elements.btnClearLogs.addEventListener('click', clearLogs);
 
   if (elements.btnCloseGenerated) {
@@ -692,6 +697,7 @@ async function refreshData() {
     addLog(`Saldo: ${formatADA(balanceData.balance)}`);
 
     await refreshUtxos();
+    await refreshNfts();
 
     await refreshStakeInfo();
 
@@ -725,6 +731,77 @@ async function refreshUtxos() {
     showToast(msg);
   } finally {
     setLoading(elements.btnRefreshUtxos, false);
+  }
+}
+
+async function refreshNfts() {
+  if (!wallet) {
+    showToast('Importe ou gere uma carteira primeiro');
+    return;
+  }
+
+  if (!await ensureNetworkConfigured(currentNetwork, 'consultar os NFTs')) return;
+
+  setLoading(elements.btnRefreshNfts, true);
+  try {
+    const assetsData = await apiCall(`/nfts/${wallet.address}`);
+    updateNftGallery(assetsData.assets);
+    addLog(`Coleção atualizada: ${assetsData.assets.length} asset(s)`);
+    showToast('NFTs atualizados');
+  } catch (error) {
+    const msg = getErrorMessage(error);
+    addLog(`Erro ao atualizar NFTs: ${msg}`, 'error');
+    showToast(msg);
+  } finally {
+    setLoading(elements.btnRefreshNfts, false);
+  }
+}
+
+function updateNftGallery(assets) {
+  elements.nftCount.textContent = assets.length;
+
+  if (assets.length === 0) {
+    elements.nftGallery.innerHTML = `
+      <div class="empty-state">
+        <p>Nenhum NFT encontrado</p>
+        <span>Esta carteira ainda não possui assets nativos na rede ${networkLabel(currentNetwork)}</span>
+      </div>
+    `;
+    return;
+  }
+
+  elements.nftGallery.innerHTML = assets.map((asset) => {
+    const image = asset.image
+      ? `<img class="nft-image" src="${escapeHtml(asset.image)}" alt="${escapeHtml(asset.assetName)}" loading="lazy" onerror="this.closest('.nft-item').classList.add('image-missing')">`
+      : '<div class="nft-image nft-image-placeholder" aria-hidden="true">◉</div>';
+    const typeLabel = asset.isNft ? 'NFT' : 'Asset nativo';
+    return `
+      <article class="nft-item">
+        ${image}
+        <div class="nft-item-body">
+          <div class="nft-item-heading">
+            <span class="nft-type">${typeLabel}</span>
+            <span class="nft-quantity">${escapeHtml(asset.quantity)}x</span>
+          </div>
+          <h3>${escapeHtml(asset.assetName)}</h3>
+          ${asset.description ? `<p>${escapeHtml(asset.description)}</p>` : ''}
+          <code title="${escapeHtml(asset.unit)}">${escapeHtml(asset.unit.slice(0, 22))}...</code>
+          <button type="button" class="btn-copy nft-copy" data-asset-unit="${escapeHtml(asset.unit)}" title="Copiar asset unit">Copiar asset unit</button>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+async function handleNftGalleryClick(event) {
+  const button = event.target.closest('[data-asset-unit]');
+  if (!button) return;
+
+  try {
+    await navigator.clipboard.writeText(button.dataset.assetUnit);
+    showToast('Asset unit copiado');
+  } catch {
+    showToast('Não foi possível copiar o asset unit');
   }
 }
 
@@ -936,6 +1013,15 @@ function formatADA(lovelace) {
   if (!lovelace) return '0.000000';
   const ada = lovelace / 1000000;
   return ada.toFixed(6);
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
 }
 
 function setConnected(state) {
