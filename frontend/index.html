@@ -201,8 +201,12 @@
         </div>
         <p class="section-description">Calcule a identidade do arquivo, registre a declaração criativa e verifique a obra depois da cunhagem.</p>
         <div class="nft-workspace">
-          <form id="nftMintForm" class="nft-form">
-            <h3>Cunhar NFT</h3>
+          <div class="nft-panel">
+            <div class="nft-panel-header">
+              <span class="nft-step">01</span>
+              <div><h3>Cunhar uma obra</h3><p>Registre o arquivo, o contexto criativo e a imagem pública.</p></div>
+            </div>
+            <form id="nftMintForm" class="nft-form">
             <div class="form-group">
               <label for="nftNetwork">Rede</label>
               <select id="nftNetwork">
@@ -235,16 +239,37 @@
               <div class="form-group"><label for="nftProject">Projeto</label><input id="nftProject" value="Origem Digital" required></div>
             </div>
             <button type="submit" class="btn btn-primary btn-full" id="btnNftMint">Preparar e cunhar</button>
-          </form>
-          <form id="nftVerifyForm" class="nft-form nft-verify-form">
-            <h3>Verificar arquivo</h3>
-            <p class="form-hint">Compare um arquivo local com o hash publicado no ativo.</p>
+            </form>
+          </div>
+          <div class="nft-panel">
+            <div class="nft-panel-header">
+              <span class="nft-step">02</span>
+              <div><h3>Verificar uma obra</h3><p>Compare o arquivo original com o hash publicado no ativo.</p></div>
+            </div>
+            <form id="nftVerifyForm" class="nft-form nft-verify-form">
             <div class="form-group"><label for="nftVerifyNetwork">Rede</label><select id="nftVerifyNetwork"><option value="preview">Preview</option><option value="preprod">Preprod</option></select></div>
             <div class="form-group"><label for="nftAssetUnit">Asset unit</label><input id="nftAssetUnit" placeholder="policyId + assetNameHex" required></div>
             <div class="form-group"><label for="nftVerifyFile">Arquivo para comparar</label><input type="file" id="nftVerifyFile" accept="image/*" required></div>
             <button type="submit" class="btn btn-secondary btn-full" id="btnNftVerify">Verificar correspondência</button>
             <div id="nftVerifyResult" class="nft-result" role="status"></div>
-          </form>
+            </form>
+          </div>
+          <section id="nftMintResult" class="nft-mint-result" style="display: none" aria-live="polite">
+            <div class="nft-panel-header">
+              <span class="nft-step">03</span>
+              <div><h3>Cunhagem enviada</h3><p>Guarde estes dados para acompanhar a operação na rede escolhida.</p></div>
+            </div>
+            <div class="nft-result-grid">
+              <div class="result-item"><span>Rede</span><code id="nftResultNetwork">--</code></div>
+              <div class="result-item"><span>Transação</span><code id="nftResultTxHash">--</code></div>
+              <div class="result-item"><span>Asset unit</span><code id="nftResultUnit">--</code></div>
+              <div class="result-item"><span>UTXO criado</span><code id="nftResultUtxo">Aguardando indexação...</code></div>
+            </div>
+            <div class="nft-result-actions">
+              <button type="button" class="btn btn-secondary" id="btnCopyNftResultUtxo">Copiar UTXO</button>
+              <a href="#" id="nftResultExplorerLink" target="_blank" rel="noopener" class="btn btn-link">Ver no CardanoScan</a>
+            </div>
+          </section>
         </div>
       </section>
 

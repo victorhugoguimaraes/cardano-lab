@@ -27,6 +27,13 @@ const elements = {
   nftVerifyForm: document.getElementById('nftVerifyForm'),
   nftFileHash: document.getElementById('nftFileHash'),
   nftVerifyResult: document.getElementById('nftVerifyResult'),
+  nftMintResult: document.getElementById('nftMintResult'),
+  nftResultNetwork: document.getElementById('nftResultNetwork'),
+  nftResultTxHash: document.getElementById('nftResultTxHash'),
+  nftResultUnit: document.getElementById('nftResultUnit'),
+  nftResultUtxo: document.getElementById('nftResultUtxo'),
+  nftResultExplorerLink: document.getElementById('nftResultExplorerLink'),
+  btnCopyNftResultUtxo: document.getElementById('btnCopyNftResultUtxo'),
   btnFaucet: document.getElementById('btnFaucet'),
   btnCopyAddress: document.getElementById('btnCopyAddress'),
   mnemonicSection: document.getElementById('mnemonicSection'),
@@ -111,6 +118,7 @@ function init() {
   elements.btnRefreshNfts.addEventListener('click', refreshNfts);
   elements.nftMintForm.addEventListener('submit', handleNftMint);
   elements.nftVerifyForm.addEventListener('submit', handleNftVerify);
+  elements.btnCopyNftResultUtxo.addEventListener('click', copyNftResultUtxo);
   elements.btnFaucet.addEventListener('click', openFaucet);
   elements.btnCopyAddress.addEventListener('click', copyAddress);
   elements.transferForm.addEventListener('submit', handleTransfer);
@@ -190,6 +198,11 @@ async function refreshApiStatus() {
 
 function networkLabel(network) {
   return network === 'preview' ? 'Preview' : 'Preprod';
+}
+
+function cardanoScanTransactionUrl(network, txHash) {
+  const host = network === 'preview' ? 'preview.cardanoscan.io' : 'preprod.cardanoscan.io';
+  return `https://${host}/transaction/${txHash}`;
 }
 
 function networkConfigurationMessage(network, operation = 'usar esta rede') {
@@ -932,12 +945,53 @@ async function handleNftMint(event) {
     addLog(`NFT enviado: ${result.txHash}`, 'success');
     showToast('NFT enviado para a rede');
     document.getElementById('nftAssetUnit').value = result.unit;
+    showNftMintResult(result, payload.network);
+    setTimeout(() => refreshMintedUtxo(payload.network), 5000);
   } catch (error) {
     const msg = getErrorMessage(error);
     addLog(`Erro ao cunhar NFT: ${msg}`, 'error');
     showToast(msg);
   } finally {
     setLoading(document.getElementById('btnNftMint'), false);
+  }
+}
+
+function showNftMintResult(result, network) {
+  elements.nftMintResult.style.display = 'block';
+  elements.nftMintResult.dataset.network = network;
+  elements.nftResultNetwork.textContent = networkLabel(network);
+  elements.nftResultTxHash.textContent = result.txHash;
+  elements.nftResultUnit.textContent = result.unit;
+  elements.nftResultUtxo.textContent = result.utxo || 'Aguardando indexação...';
+  elements.nftResultExplorerLink.href = cardanoScanTransactionUrl(network, result.txHash);
+  elements.nftResultExplorerLink.textContent = `Ver no CardanoScan · ${networkLabel(network)}`;
+}
+
+async function refreshMintedUtxo(network = elements.nftMintResult.dataset.network || currentNetwork) {
+  const unit = elements.nftResultUnit.textContent;
+  if (!wallet || !unit || unit === '--') return;
+
+  try {
+    const data = await apiCall(`/utxos/${encodeURIComponent(wallet.address)}?network=${network}`);
+    const match = data.utxos.find((utxo) => utxo.amount.some((amount) => amount.unit === unit));
+    if (match) elements.nftResultUtxo.textContent = `${match.tx_hash}#${match.output_index}`;
+  } catch {
+    // The result card already explains that indexing can take a moment.
+  }
+}
+
+async function copyNftResultUtxo() {
+  const value = elements.nftResultUtxo.textContent;
+  if (!value || value === 'Aguardando indexação...') {
+    showToast('A UTXO ainda está sendo indexada');
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(value);
+    showToast('UTXO da cunhagem copiada');
+  } catch {
+    showToast('Não foi possível copiar a UTXO');
   }
 }
 
@@ -1015,7 +1069,7 @@ async function handleTransfer(e) {
 
     elements.resultCard.style.display = 'block';
     elements.txHash.textContent = data.txHash;
-    elements.explorerLink.href = `https://preview.cardanoscan.io/transaction/${data.txHash}`;
+    elements.explorerLink.href = cardanoScanTransactionUrl(currentNetwork, data.txHash);
 
     addLog(`Transação enviada: ${data.txHash.substring(0, 16)}...`, 'success');
     showToast('Transação enviada!');

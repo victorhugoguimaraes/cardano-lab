@@ -3,7 +3,7 @@ import { createHeadlessWallet } from '../core/wallet';
 import { mintOneNft, type MintInput } from '../core/mint';
 import { verifyHashAgainstAsset } from '../core/verify';
 import { loadWallet } from './wallet';
-import { getBlockfrostProjectId } from './blockfrost';
+import { getBlockfrost, getBlockfrostProjectId } from './blockfrost';
 import { AppError } from './errors';
 import type { CardanoNetwork } from '../core/types';
 
@@ -63,7 +63,32 @@ export async function mintFromConfiguredWallet(input: MintInput) {
   if (!wallet) throw new Error('Configure ou importe uma carteira antes de cunhar.');
   const provider = providerFor(input.network);
   const signingWallet = await createHeadlessWallet(input.network, provider, wallet.mnemonic);
-  return mintOneNft(provider, signingWallet, input);
+  const result = await mintOneNft(provider, signingWallet, input);
+  const outputIndex = await findMintedOutputIndex(input.network, result.txHash, result.unit);
+
+  return {
+    ...result,
+    outputIndex,
+    utxo: outputIndex === null ? null : `${result.txHash}#${outputIndex}`,
+  };
+}
+
+async function findMintedOutputIndex(network: CardanoNetwork, txHash: string, unit: string): Promise<number | null> {
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    try {
+      const transaction = await getBlockfrost(network).txsUtxos(txHash);
+      const outputIndex = transaction.outputs.findIndex((output) =>
+        output.amount.some((amount) => amount.unit === unit)
+      );
+      if (outputIndex >= 0) return outputIndex;
+    } catch {
+      // Blockfrost may need a few seconds to index the submitted transaction.
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+  }
+
+  return null;
 }
 
 export async function verifyNftHash(network: CardanoNetwork, assetUnit: string, fileHash: string) {
