@@ -429,7 +429,7 @@ async function apiCall(endpoint, method = 'GET', body = null, includeNetwork = t
   try {
     const options = {
       method,
-      headers: { 'Content-Type': 'application/json' },
+      headers: body ? { 'Content-Type': 'application/json' } : {},
     };
     if (body) options.body = JSON.stringify(body);
 
@@ -437,7 +437,7 @@ async function apiCall(endpoint, method = 'GET', body = null, includeNetwork = t
     const url = includeNetwork && method === 'GET' && endpoint !== '/config/networks'
       ? `${endpoint}${separator}network=${currentNetwork}`
       : endpoint;
-    const response = await fetch(`${API_BASE}${url}`, options);
+    const response = await fetchWithRetry(`${API_BASE}${url}`, options);
 
     const textBody = await response.text();
 
@@ -480,6 +480,22 @@ async function apiCall(endpoint, method = 'GET', body = null, includeNetwork = t
       details: 'Ocorreu um erro inesperado.',
     };
   }
+}
+
+async function fetchWithRetry(url, options, attempts = 3) {
+  let lastError;
+
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      return await fetch(url, options);
+    } catch (error) {
+      lastError = error;
+      if (attempt === attempts - 1) break;
+      await new Promise((resolve) => setTimeout(resolve, 2500));
+    }
+  }
+
+  throw lastError;
 }
 
 function getErrorMessage(error) {
